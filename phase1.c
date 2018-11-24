@@ -62,5 +62,6 @@ int main () {
         //prices.txt
             // write prices: ad id, category, location
     
+    //I love when poo poo cleans his pee pee.
 }
 
