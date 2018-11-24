@@ -5,47 +5,25 @@
 #include <stdio.h>
 
 int main () {
-    '''-------------------------------------'''
-    //read text; maybe iterate per line?
-    //make list; maybe struct?
-        
+    FILE * inputFile, termsText, pdatesText, pricesText, adsText;
+    int aid;
+    char pdate[];
+    char loc[];
+    char cat[];
+    char title[30]:
+    char desc[150];
+    int price;
 
-    // terms.txt -> terms: ad id
-        //create writable file
-        //for each iteration:
-            //scan each keyword, split?
-            //check len > 2
-            //write on file with adid
-
-    // pdaes.txt -> date: ad id, category, locaion
-        //create writable file
-        //for each iteration:
-            //scan ad id
-            //scan date
-            //scan loc
-            //scan cat
-            //write all to file 
-            // d:a,c,l
-            //scan to end? \n
-
-    // prices.txt -> prices: ad id, category, location
-        //create writable file
-        //for each iteration:
-            //scan ad id
-            //scan location
-            //scan category
-            //skip scan until prices
-            //write to file
-            // p:a,c,l
-            //scan to end
-
-    // ads.txt -> ad id: full record
-    '''-------------------------------------'''
     //read input file
+    input file = fopen("./input.txt", 'r');
+
     //create output files
-    // struct Ads
+    termsText = fopen("./terms.txt", "w+");
+
     // for each line of input [check for EOF]:
         //get info
+        fscanf(inputFile, "%*[^<ad>]");
+
         //create struct
         // write onto outputs using struct info.
 
@@ -62,6 +40,5 @@ int main () {
         //prices.txt
             // write prices: ad id, category, location
     
-    //I love when poo poo cleans his pee pee.
 }
 
