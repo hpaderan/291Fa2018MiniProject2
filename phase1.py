@@ -71,9 +71,10 @@ def main ():
         
         currAd = inpFile.readline()
         infoBuff = currAd.partition("<ad>")
-
+        
+        '''===================================================================='''
         #------- Write to output -----------
-
+        
         #//terms.txt
             #//split
              #title split
@@ -81,53 +82,96 @@ def main ():
         
         for tiTerm in titleTerms:
             tempTerm = ""
+            # case if alnum
             if (re.match("^[A-Za-z0-9_-]*$", tiTerm)):
                 newTerm = tiTerm
+            # case if special chars found
             else:
-                
                 i = 0
-                for i in range(len(tiTerm)):
-                    if (re.match("^[A-Za-z0-9_-]*$", tiTerm[i])):
-                        tempTerm+=tiTerm[i]
-                    else:
+                prev =''
+                # check each char in string
+                while i < len(tiTerm):
+                    # if found coded special character
+                    if (prev == '&'):
+                        if (tiTerm[i] == '#'):
+                            while (tiTerm[i] != ';'):
+                                i+=1
+                        # if found '.' : take last part of string and add to titleTerms list for checking
+                    elif tiTerm[i] == '.' or tiTerm[i] == '/' or tiTerm[i] == '#':
+                        titleTerms.append(tiTerm[i+1:])
                         break
                     
+                    # look if alnum, if so then append to string placeholder
+                    if (re.match("^[A-Za-z0-9_-]*$", tiTerm[i])):
+                        tempTerm+=tiTerm[i]
+                    
+                    # update prev for checking for special coded chars
+                    prev = tiTerm[i]
+                    
+                    i+=1
+                    # -------------end of while loop--------------
+                        
+                # end of search, print found string sequence
+                newTerm = tempTerm
+            
+            # check length of found string: if so then record
             if len(newTerm) > 2:
                 termsOut.write("%s:%d\n" % (newTerm.lower(),aid))
-                
+            
+        '''-----------------------------------------------------------------'''
                  
-                #desc split
+        #desc split
         descTerms = desc.split()
             
         for deTerm in descTerms:
-            print(deTerm)
             tempTerm = ""
+            # case if alnum
             if (re.match("^[A-Za-z0-9_-]*$", deTerm)):
                 newTerm = deTerm
+                
+            #case if special chars found
             else:
                 i = 0
-                for i in range(len(deTerm)):
+                prev = ''
+                # check each char in string
+                while i < len(deTerm):
+                    #if found coded special char
+                    if (prev == '&'):
+                        if (deTerm[i] == '#'):
+                            while (deTerm[i] != ';'):
+                                i+=1
+                    # if found '.': take last part of string and add to descTerms list for checking
+                    elif deTerm[i] == '.' or deTerm[i] == '/' or deTerm[i] == '#':
+                        descTerms.append(deTerm[i+1:])
+                        break
+                    
+                    # check if char is valid
                     if (re.match("^[A-Za-z0-9_-]*$", deTerm[i])):
                         tempTerm+=deTerm[i]
-                    else:
-                        newTerm = tempTerm
-                        print(tempTerm, "temp here-----------------------")
-                        break
+                    # update prev for checking for special coded chars
+                    prev = deTerm[i]
+                    
+                    i+=1
+                    # -------------end of while loop--------------                    
+    
+                newTerm = tempTerm
                     
             if len(newTerm) > 2:
                 termsOut.write("%s:%d\n" % (newTerm.lower(),aid))
                  
             #//for each split: write term : ad id
-        
+        '''===================================================================='''
         #//pdate.txt
             #// write pdate: ad id, category, location
         pdateLine = "%s:%d,%s,%s" % (pdate,aid,cat,loc)
         pdatesOut.write(pdateLine + "\n")
+        '''===================================================================='''
 
         #//prices.txt
             #// write prices: ad id, category, location
         pricesLine = "%8d:%d,%s,%s" % (price,aid,cat,loc)
         pricesOut.write(pricesLine + "\n")
+        '''===================================================================='''
         
         #ads.txt
         # write full record
