@@ -80,38 +80,39 @@ def main ():
         titleTerms = title.split()
         
         for tiTerm in titleTerms:
+            tempTerm = ""
             if (re.match("^[A-Za-z0-9_-]*$", tiTerm)):
                 newTerm = tiTerm
             else:
-                tempTerm = ""
+                
                 i = 0
                 for i in range(len(tiTerm)):
                     if (re.match("^[A-Za-z0-9_-]*$", tiTerm[i])):
                         tempTerm+=tiTerm[i]
                     else:
                         break
-                if tempTerm != "":
-                    newTerm = tempTerm
                     
             if len(newTerm) > 2:
                 termsOut.write("%s:%d\n" % (newTerm.lower(),aid))
+                
                  
                 #desc split
         descTerms = desc.split()
             
         for deTerm in descTerms:
+            print(deTerm)
+            tempTerm = ""
             if (re.match("^[A-Za-z0-9_-]*$", deTerm)):
                 newTerm = deTerm
             else:
-                tempTerm = ""
                 i = 0
                 for i in range(len(deTerm)):
                     if (re.match("^[A-Za-z0-9_-]*$", deTerm[i])):
                         tempTerm+=deTerm[i]
                     else:
+                        newTerm = tempTerm
+                        print(tempTerm, "temp here-----------------------")
                         break
-                if tempTerm != "":
-                    newTerm = tempTerm
                     
             if len(newTerm) > 2:
                 termsOut.write("%s:%d\n" % (newTerm.lower(),aid))
