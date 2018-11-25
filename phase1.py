@@ -5,7 +5,7 @@ import re
 
 def main ():
     currDir = os.getcwd()
-    inpFile = open(currDir + "\inputfile.txt", "r")
+    inpFile = open(currDir + "/inputfile.txt", "r")
     #read input file
     
     ##create output files
@@ -88,6 +88,8 @@ def main ():
                 for i in range(len(tiTerm)):
                     if (re.match("^[A-Za-z0-9_-]*$", tiTerm[i])):
                         tempTerm+=tiTerm[i]
+                    else:
+                        break
                 if tempTerm != "":
                     newTerm = tempTerm
                     
@@ -106,6 +108,8 @@ def main ():
                 for i in range(len(deTerm)):
                     if (re.match("^[A-Za-z0-9_-]*$", deTerm[i])):
                         tempTerm+=deTerm[i]
+                    else:
+                        break
                 if tempTerm != "":
                     newTerm = tempTerm
                     
