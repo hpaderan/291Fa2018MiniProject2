@@ -84,8 +84,7 @@ def main():
 				compVal = args[i+2]
 
 				# sql search here!!!!!!!!!!!
-				someOut = searchInDB(args[i],compOp,compVal, curs,adsdb)
-				output.append(someOut)
+				loc_aid = LocationSearch(compVal,adscursor)
 				# ignore next two args: the search values
 				i+=2
 
@@ -116,7 +115,7 @@ def main():
 				compVal = args[i+2]
 
 				# sql search here
-				queries.append("price=%s" % compVal.lower())
+				PriceSearch (compOp,compVal, ops, cursor)
 				
 				# ignore next two args: the search values
 				i+=2
@@ -183,7 +182,33 @@ def DateSearch (date, searchOp, ops, cursor):
 
 	return retAids
 
-def 
+def LocationSearch(argument,curs):
+    argument = argument.lower()
+    cursor = curs.first()
+    Aids = []
+    while cursor != None:
+	cursor_str = str(cursor[1].decode("utf-8"))
+	result = re.search('<loc>(.*)<loc/>',cursor_str)
+	location_part = result.group(1)
+	if (location_part.lower() == argument):
+	    Aids.append(cursor[0].decode("utf-8"))
+    
+    return Aids
+
+
+def PriceSearch (searchOp,price,ops, cursor):
+	item = cursor,first()
+	retAids = []
+	#iterate through database
+	while item:
+		itemPrice = str(item[0].decode("utf-8"))
+		if ops[searchOp](itemPrice, price):
+			info = str(item[1].decode("utf-8"))
+			aid = info.split(",")[0]
+			retAids.append(aids)
+		cursor.next()
+
+	return retAids
 
 def briefprint(aids):
 	#get all withaids and print
