@@ -54,7 +54,7 @@ def main():
 			briefoutput = False
 
 		# list of queries
-		queries = []
+		outputs = []
 
 		# string patterns for parsing
 		datePattern = re.compile("\d{4}/\d{2}/\d{2}")
@@ -63,24 +63,26 @@ def main():
 		i = 0
 		while i < len(args):
 			#aid
-			if arg[i].lower() == "aid":
+			'''if arg[i].lower() == "aid":
 				compOp = args[i+1]
 				compVal = args[i+2]
 
 				# sql search here!!!!!!!!!!
-				queries.append("aid=%s" % compVal.lower())
+				#queries.append("aid=%s" % compVal.lower())
+				searchInDB(args[i],compOp,compVal, adscurs,adsdb)
 
 				# ignore next two args: the search values
 				i+=2
 			
 			#location
-			elif args[i].lower() == "location":
+			el'''
+			if args[i].lower() == "location":
 				compOp = args[i+1]
 				compVal = args[i+2]
 
 				# sql search here!!!!!!!!!!!
-				queries.append("location=%s" % compVal.lower())
-
+				someOut = searchInDB(args[i],compOp,compVal, curs,adsdb)
+				output.append(someOut)
 				# ignore next two args: the search values
 				i+=2
 
@@ -132,8 +134,7 @@ def main():
 			#--------------end while loop-----------
 
 		#----------_QUERIES_------------------------
-
-
+	
 
 
 		#------------_Output_-------------------------			
@@ -149,3 +150,11 @@ def main():
 
 		# invidivual query done
 		print("Query complete.")
+
+def SearchInDB(string, op = '', cmpVal = '', cursor, db):
+	#return aid for all outs
+
+def briefprint(aids):
+	#get all withaids and print
+
+def fullprint(aids):
