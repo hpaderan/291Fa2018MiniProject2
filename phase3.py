@@ -283,13 +283,20 @@ def fullprint(aids, cursor):
 		item = cursor.first()
 		while item:
 			if (aid == item[0].decode("utf-8")):
-				pAid = re.search("<aid>(.*)</aid>", item[1])
-				date = re.search("<date>(.*)</date>", item[1])
-				loc = re.search("<loc>(.*)</loc>", item[1])
-				cat = re.search("<cat>(.*)</cat>", item[1])
-				ti = re.search("<ti>(.*)</ti>", item[1])
-				desc = re.search("<desc>(.*)</desc>", item[1])
-				price = re.search("<price>(.*)</price>", item[1])
+				pAidS = re.search("<aid>(.*)</aid>", item[1])
+				pAid = pAidS.group(1)
+				dateS = re.search("<date>(.*)</date>", item[1])
+				date = dateS.group(1)
+				locS = re.search("<loc>(.*)</loc>", item[1])
+				loc = locS.group(1)
+				catS = re.search("<cat>(.*)</cat>", item[1])
+				cat = catS.group(1)
+				tiS = re.search("<ti>(.*)</ti>", item[1])
+				ti = tiS.group(1)
+				descS = re.search("<desc>(.*)</desc>", item[1])
+				desc = descS.group(1)
+				priceS = re.search("<price>(.*)</price>", item[1])
+				price = priceS.group(1)
 				strFormat = "Aid: %s\nDate: %s\nLocation: %s\nCategory: %s\nTitle: %s\nDescription: %s\nPrice: %s\n-------------------------------"
 				print(strFormat % (pAid,date,loc,cat,ti,desc,price))
 				
