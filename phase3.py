@@ -48,15 +48,16 @@ def main():
 		if 'quit' in args:
 			break
 
-		# change output type
+'''		# change output type
 		if "output=brief" in args:
 			briefoutput = True
 		elif "output=full" in args:
 			briefoutput = False
-
+'''
 		# list of queries
-		outputs = []
-		catAids = []
+		finalRes = []
+		tempRes = []
+		isFirst = True
 
 		# string patterns for parsing
 		datePattern = re.compile("\d{4}/\d{2}/\d{2}")
@@ -84,7 +85,8 @@ def main():
 				compVal = args[i+2]
 
 				# sql search here!!!!!!!!!!!
-				someOut = searchInDB(args[i],compOp,compVal, curs,adsdb)
+				#if tempRes is empty
+				tempRes = searchInDB(args[i],compOp,compVal, curs,adsdb)
 				output.append(someOut)
 				# ignore next two args: the search values
 				i+=2
@@ -95,7 +97,7 @@ def main():
 				compVal = args[i+2]
 
 				# search here!!!!!!!!!!!
-				catAids = CatSearch(compVal, adscursor)
+				tempRes = CatSearch(compVal, adscursor)
 
 				# ignore next two args: the search values
 				i+=2
@@ -106,7 +108,7 @@ def main():
 				compVal = args[i+2]
 
 				# search here
-				DateSearch (compVal, compOp, ops, cursor)
+				tempRes = DateSearch (compVal, compOp, ops, datescursor)
 
 				# ignore next two args: the search values
 				i+=2
@@ -121,17 +123,34 @@ def main():
 				# ignore next two args: the search values
 				i+=2
 
-			#output
+			#output: treat 'output' as not a term
 			elif args[i].lower() == "output":
-				print("Do nothing")
+				compOp = args[i+1]
+				compVal = args[i+2]
 
-			#keywords: title desc
+				if (compVal.lower() == "brief"):
+					briefoutput = True
+				elif (compVal.lower() == "full"):
+					briefoutput = False
+
+			# % at end of term
+			elif (args[i] == "%"):
+				# assume % will never appear in beginning 
+				compVal = args[i-1]
+				tempRes = LikeTermSearch(compVal, termcursor)
+
+			#terms: title, desc
 			else:
 				#Query the term provided
-				queries.append(args[i])
+				tempRes = TermSearch(args[i], termcursor)
 
 
-
+			# intersect onto a final result list with very query				
+			if not isFirst:
+				finalRes = [value for value in some1 if value in some2]
+			else:
+				finalRes = tempRes
+				isFirst = False
 
 			i+=1
 			#--------------end while loop-----------
@@ -156,6 +175,7 @@ def main():
 
 
 def CatSearch (cat, cursor):
+	cat = cat.lower()
 	item = cursor.first()
 	retAids = []
 	# iterate through database
@@ -165,6 +185,7 @@ def CatSearch (cat, cursor):
 		tempSearch = re.search("<cat>(.*)</cat>", ad)
 		if tempSearch == cat:
 			retAids.append(item[0].decode('utf-8'))
+
 		# loop terminator
 		item = cursor.next
 	return retAids
@@ -174,16 +195,47 @@ def DateSearch (date, searchOp, ops, cursor):
 	retAids = []
 	#iterate through database
 	while item:
+		# get date from datesDb and compare with provided, append aid if true
 		itemDate = str(item[0].decode("utf-8"))
 		if ops[searchOp](itemDate, date):
 			info = str(item[1].decode("utf-8"))
 			aid = info.split(",")[0]
 			retAids.append(aids)
-		cursor.next()
+		
+		#loop terminator
+		item = cursor.next()
 
 	return retAids
 
-def 
+def TermSearch (term, cursor):
+	term = term.lower()
+	item = cursor.first()
+	retAids = []
+	#iterate through database
+	while item:
+		#if compare term to key is true, append aid
+		dbKey = str(item[0].decode("utf-8"))
+		if (term == dbKey):
+			info = str(item[1].decode("utf-8"))
+			retAids.append(info)
+
+		# loop terminator
+		item = cursor.next()
+
+def LikeTermSearch (term, cursor):
+	term = term.lower()
+	item = cursor.first()
+	retAids = []
+	#iterate through database
+	while item:
+		#if compare term to key is true, append aid
+		dbKey = str(item[0].decode("utf-8"))
+		if (dbKey.lower().startswith(term)):
+			info = str(item[1].decode("utf-8"))
+			retAids.append(info)
+
+		# loop terminator
+		item = cursor.next()
 
 def briefprint(aids):
 	#get all withaids and print
