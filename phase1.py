@@ -78,7 +78,7 @@ def main ():
         #//terms.txt
             #//split
              #title split
-        titleTerms = title.split()
+        titleTerms = title.split(" ")
         
         for tiTerm in titleTerms:
             tempTerm = ""
@@ -92,12 +92,19 @@ def main ():
                 # check each char in string
                 while i < len(tiTerm):
                     # if found coded special character
-                    if (prev == '&'):
-                        if (tiTerm[i] == '#'):
-                            while (tiTerm[i] != ';'):
+                    if (tiTerm[i] == '&'):
+                        # case if eg. tiTerm = &#123; -> ignore
+                        if ((i < (len(tiTerm) - 1)) and tiTerm[i+1] == '#'):
+                            while (tiTerm[i] != ';' and i < len(tiTerm)):
                                 i+=1
+                        #case if eg tiTerm = &apos; -> treat as separator
+                        else:
+                            while (tiTerm[i] != ';' and i < len(tiTerm)):
+                                i+=1
+                            titleTerms.append(tiTerm[i:])
+                            break
                         # if found '.' : take last part of string and add to titleTerms list for checking
-                    elif tiTerm[i] == '.' or tiTerm[i] == '/' or tiTerm[i] == '#':
+                    elif ((re.match("^[A-Za-z0-9_-]*$", tiTerm[i]) == None)):
                         titleTerms.append(tiTerm[i+1:])
                         break
                     
@@ -106,7 +113,7 @@ def main ():
                         tempTerm+=tiTerm[i]
                     
                     # update prev for checking for special coded chars
-                    prev = tiTerm[i]
+                    #prev = tiTerm[i]
                     
                     i+=1
                     # -------------end of while loop--------------
@@ -121,7 +128,7 @@ def main ():
         '''-----------------------------------------------------------------'''
                  
         #desc split
-        descTerms = desc.split()
+        descTerms = desc.split(" ")
             
         for deTerm in descTerms:
             tempTerm = ""
@@ -132,16 +139,23 @@ def main ():
             #case if special chars found
             else:
                 i = 0
-                prev = ''
+                #prev = ''
                 # check each char in string
                 while i < len(deTerm):
                     #if found coded special char
-                    if (prev == '&'):
-                        if (deTerm[i] == '#'):
-                            while (deTerm[i] != ';'):
+                    if (deTerm[i] == '&'):
+                        # case if eg. deTerm = &#123; -> ignore
+                        if ((i < len(deTerm) - 1) and (deTerm[i+1] == '#')):
+                            while (deTerm[i] != ';' and i < len(deTerm)):
                                 i+=1
-                    # if found '.': take last part of string and add to descTerms list for checking
-                    elif deTerm[i] == '.' or deTerm[i] == '/' or deTerm[i] == '#':
+                        # case if eg. deTerm = &apos; -> treat as separator
+                        else:
+                            while (deTerm[i] != ';' and i < len(deTerm)):
+                                i+=1
+                            descTerms.append(deTerm[i:])
+                            break
+                    # if found special char -> treat as separator
+                    elif ((re.match("^[A-Za-z0-9_-]*$", deTerm[i]) == None)):
                         descTerms.append(deTerm[i+1:])
                         break
                     
@@ -149,8 +163,9 @@ def main ():
                     if (re.match("^[A-Za-z0-9_-]*$", deTerm[i])):
                         tempTerm+=deTerm[i]
                     # update prev for checking for special coded chars
-                    prev = deTerm[i]
+                    #prev = deTerm[i]
                     
+                    # loop counter
                     i+=1
                     # -------------end of while loop--------------                    
     
