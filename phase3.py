@@ -10,7 +10,11 @@ def main():
     priceDb.open('pr.idx',None,db.DB_BTREE,db.DB_CREATE)
     datesDb.open('da.idx',None,db.DB_BTREE,db.DB_CREATE)
     adsDb.open('ad.idx',None,db.DB_HASH,db.DB_CREATE)
-
+	termcursor = termsDb.cursor()
+	pricecursor = priceDb.cursor()
+	datescursor = datesDb.cursor()
+	adscursor = dasDb.cursor()
+	
 	# init output type to brief, change accordingly
 	briefoutput = True
     while (True):
