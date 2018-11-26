@@ -1,5 +1,6 @@
 from bsddb3 import db
 import re
+import operator
 
 def main():
     termsDb = db.DB()
@@ -13,7 +14,7 @@ def main():
 	termcursor = termsDb.cursor()
 	pricecursor = priceDb.cursor()
 	datescursor = datesDb.cursor()
-	adscursor = dasDb.cursor()
+	adscursor = adsDb.cursor()
 	
 	# init output type to brief, change accordingly
 	briefoutput = True
@@ -55,9 +56,11 @@ def main():
 
 		# list of queries
 		outputs = []
+		catAids = []
 
 		# string patterns for parsing
 		datePattern = re.compile("\d{4}/\d{2}/\d{2}")
+		ops = {"=":operator.eq, ">":operator.gt, ">=":operator.ge, "<":operator.lt, "<=":operator.le}
 
 		# iterate for each search argument
 		i = 0
@@ -91,8 +94,8 @@ def main():
 				compOp = args[i+1]
 				compVal = args[i+2]
 
-				# sql search here!!!!!!!!!!!
-				queries.append("cat=%s" % compVal.lower())
+				# search here!!!!!!!!!!!
+				catAids = CatSearch(compVal, adscursor)
 
 				# ignore next two args: the search values
 				i+=2
@@ -102,8 +105,8 @@ def main():
 				compOp = args[i+1]
 				compVal = args[i+2]
 
-				# sql search here
-				queries.append("date=%s" % compVal.lower())
+				# search here
+				DateSearch (compVal, compOp, ops, cursor)
 
 				# ignore next two args: the search values
 				i+=2
@@ -151,8 +154,36 @@ def main():
 		# invidivual query done
 		print("Query complete.")
 
-def SearchInDB(string, op = '', cmpVal = '', cursor, db):
-	#return aid for all outs
+
+def CatSearch (cat, cursor):
+	item = cursor.first()
+	retAids = []
+	# iterate through database
+	while item:
+		# get category from ads database
+		ad = str(item[1].decode("utf-8"))
+		tempSearch = re.search("<cat>(.*)</cat>", ad)
+		if tempSearch == cat:
+			retAids.append(item[0].decode('utf-8'))
+		# loop terminator
+		item = cursor.next
+	return retAids
+
+def DateSearch (date, searchOp, ops, cursor):
+	item = cursor,first()
+	retAids = []
+	#iterate through database
+	while item:
+		itemDate = str(item[0].decode("utf-8"))
+		if ops[searchOp](itemDate, date):
+			info = str(item[1].decode("utf-8"))
+			aid = info.split(",")[0]
+			retAids.append(aids)
+		cursor.next()
+
+	return retAids
+
+def 
 
 def briefprint(aids):
 	#get all withaids and print
