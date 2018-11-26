@@ -2,10 +2,11 @@
 # Phase 1
 import os
 import re
+import sys
 
 def main ():
     currDir = os.getcwd()
-    inpFile = open(currDir + "/inputfile.txt", "r")
+    inpFile = open(currDir + "/"+sys.argv[1], "r")
     #read input file
     
     ##create output files
