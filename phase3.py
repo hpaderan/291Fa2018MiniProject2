@@ -26,22 +26,25 @@ def main():
         tempQu = ''
         i = 0
         while i < len(query):
-            if (re.match("[=<>%]", query[i])):
-                if (re.match("[=]", query[i+1])):
-                    tempQu+=(" " + query[i] + " ")
+            if (re.match("[=<>]", query[i])):
+                if (query[i+1] == "="):
+                    tempQu+=(" " + query[i]+query[i+1] + " ")
                     i+=1
                 else:
                     tempQu+=(" " + query[i] + " ")
-                    i+=1
+                i+=1
+           # elif (query[i] == "%"):
+             #   tempQu+=(" " + query[i] + " ")
             else:
                 tempQu+=(query[i])
-                i+=1
+            i+=1
         
         query = tempQu
 
         '''-----------------------------------------------------'''
 
-        args = query.split(" ")
+        args = query.split()
+        print(args)
 
         if 'quit' in args:
             break
@@ -54,7 +57,7 @@ def main():
 
         i = 0
         while i < len(args):
-            if args[i].lower == "location":
+            if args[i].lower() == "location":
                 compOp = args[i+1]
                 compVal = args[i+2]
 
@@ -93,12 +96,12 @@ def main():
 
                 i+=2
             
-            elif args[i] == "%":
-                compVal = args[i-1]
-                tempRes = LikeTermSearch(compVal, termcursor)
-
             else:
-                tempRes = TermSearch(args[i], termcursor)
+                if (args[i][-1] == "%"):
+                    compVal = str(args[i][:len(args[i])-1])
+                    tempRes = LikeTermSearch(compVal, termcursor)
+                else:
+                    tempRes = TermSearch(args[i], termcursor)
 
             i+=1
         
@@ -111,14 +114,14 @@ def main():
                 isFirst = False
         #-------------- end of while loop ---------------
 
-
+        print(finalRes)
         if briefoutput:
-            print("Printing\n----------------------------------")
             briefprint(finalRes,adscursor)
         else:
             fullprint(finalRes,adscursor)
 
-        print("Query complete.")
+        print("============================================")
+        print("============================================")
     #---------------------------------------------------
 
 def CatSearch (cat, cursor):
@@ -136,7 +139,7 @@ def CatSearch (cat, cursor):
     return retAids
 
 def DateSearch (date, searchOp, ops, cursor):
-    date = date.lower()
+    date = date.lower() #obsolete. with the format
     item = cursor.first()
     retAids = []
     while item != None:
@@ -168,13 +171,16 @@ def TermSearch (term, cursor):
     return retAids
 
 def LikeTermSearch (term, cursor):
+    print(term)
     term = term.lower()
     itemB = cursor.first()
     item = itemB[0].decode("utf-8")
     retAids = []
     while itemB != None:
         if (item.lower()).startswith(term):
+            print("jygjhgfyudvtrdykhu")
             info = str(itemB[1].decode("utf-8"))
+            print(info)
             retAids.append(info)
 
         itemB = cursor.next()
@@ -186,7 +192,6 @@ def LikeTermSearch (term, cursor):
     return retAids
 
 def LocationSearch (arguments, curs):
-    print ("I am working")
     arguments = arguments.lower()
     cursor = curs.first()
     Aids = []
@@ -194,7 +199,6 @@ def LocationSearch (arguments, curs):
         cursor_str = str(cursor[1].decode("utf-8"))
         result = re.search("<loc>(.*)</loc>",cursor_str)
         location_part = result.group(1)
-        print(location_part)
         if (location_part.lower() == arguments):
             Aids.append(cursor[0].decode("utf-8"))
         cursor = curs.next()    
@@ -202,10 +206,11 @@ def LocationSearch (arguments, curs):
     return Aids
 
 def PriceSearch (price, searchOp, ops, cursor):
+    price = int(price)
     item = cursor.first()
     retAids = []
-    while item:
-        itemPrice = str(item[0].decode("utf-8"))
+    while item != None:
+        itemPrice = int(item[0].decode("utf-8"))
         if ops[searchOp](itemPrice, price):
             info = str(item[1].decode("utf-8"))
             infbuff = info.split(",")[0]
@@ -216,13 +221,10 @@ def PriceSearch (price, searchOp, ops, cursor):
 
 def briefprint(aids, cursor):
     for aid in aids:
-        print(aid, len(aids))
         item = cursor.first()
         while item:
             decItem = item[0].decode("utf-8")
-            #print(item[0], aid, aid == decItem)
             if (aid == decItem):
-                #print(aid == decItem,decItem, 'wubalubadubdub')
                 pAidS = re.search("<aid>(.*)</aid>", item[1].decode("utf-8"))
                 pAid = pAidS.group(1)
                 tiS = re.search("<ti>(.*)</ti>", item[1].decode("utf-8"))
