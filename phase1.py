@@ -39,7 +39,7 @@ def main ():
     
     #for each line of input [check for EOF]:
     while infoBuff[0] != "</ads>":
-        if infoBuff[0] == '':
+        if infoBuff[2] == '':
             break        
         #----------- read ad info -------------------
         infoBuff = infoBuff[2].partition("<aid>")

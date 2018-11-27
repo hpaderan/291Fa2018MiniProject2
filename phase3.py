@@ -32,10 +32,11 @@ def main():
                     i+=1
                 else:
                     tempQu+=(" " + query[i] + " ")
+                    i+=1
             else:
                 tempQu+=(query[i])
                 i+=1
-
+        
         query = tempQu
 
         '''-----------------------------------------------------'''
@@ -99,15 +100,20 @@ def main():
             else:
                 tempRes = TermSearch(args[i], termcursor)
 
-        if not isFirst:
-            bufferList = [value for value in tempRes if value in finalRes]
-            finalRes = bufferList
-        else:
-            finalRes = tempRes
-            isFirst = False
+            i+=1
+        
 
+            if not isFirst:
+                bufferList = [value for value in tempRes if value in finalRes]
+                finalRes = bufferList
+            else:
+                finalRes = tempRes
+                isFirst = False
         #-------------- end of while loop ---------------
+
+
         if briefoutput:
+            print("Printing\n----------------------------------")
             briefprint(finalRes,adscursor)
         else:
             fullprint(finalRes,adscursor)
@@ -146,46 +152,52 @@ def DateSearch (date, searchOp, ops, cursor):
 def TermSearch (term, cursor):
     term = term.lower()
     itemB = (cursor.first())
-    item = itemB[0]
+    item = itemB[0].decode("utf-8")
     retAids = []
-    while item != None:
-        searchRes = str(item.decode("utf-8"))
-        if (term == searchRes):
-            info = str(item.decode("utf-8"))
+    while not(itemB == None):
+        if (term == item.lower()):
+            info = str(itemB[1].decode("utf-8"))
             retAids.append(info)
+
         itemB = (cursor.next())
-        #if itemB != None:
-        if not (itemB.isempty()):
-            print (type(itemB) != None)
-            item = itemB[0]
-        print (item == None, "in", type(item))
+        if not (itemB == None):
+            item = itemB[0].decode("utf-8")
+        else:
+            item = None
 
     return retAids
 
 def LikeTermSearch (term, cursor):
     term = term.lower()
-    item = cursor.first()
+    itemB = cursor.first()
+    item = itemB[0].decode("utf-8")
     retAids = []
-    while item != None:
-        searchRes = str(item[0].decode("utf-8"))
-        if (searchRes.lower().startswith(term)):
-            info = str(item[1].decode("utf-8"))
+    while itemB != None:
+        if (item.lower()).startswith(term):
+            info = str(itemB[1].decode("utf-8"))
             retAids.append(info)
-        item = cursor.next()
+
+        itemB = cursor.next()
+        if (itemB != None):
+            item = itemB[0].decode("utf-8")
+        else:
+            item = None
 
     return retAids
 
 def LocationSearch (arguments, curs):
-    argument = argument.lower()
+    print ("I am working")
+    arguments = arguments.lower()
     cursor = curs.first()
     Aids = []
     while cursor != None:
         cursor_str = str(cursor[1].decode("utf-8"))
         result = re.search("<loc>(.*)</loc>",cursor_str)
         location_part = result.group(1)
-        if (location_part.lower() == argument):
+        print(location_part)
+        if (location_part.lower() == arguments):
             Aids.append(cursor[0].decode("utf-8"))
-        cursor = curs.next()
+        cursor = curs.next()    
 
     return Aids
 
@@ -204,15 +216,21 @@ def PriceSearch (price, searchOp, ops, cursor):
 
 def briefprint(aids, cursor):
     for aid in aids:
+        print(aid, len(aids))
         item = cursor.first()
         while item:
-            if (aid == item[0].decode("utf-8")):
+            decItem = item[0].decode("utf-8")
+            #print(item[0], aid, aid == decItem)
+            if (aid == decItem):
+                #print(aid == decItem,decItem, 'wubalubadubdub')
                 pAidS = re.search("<aid>(.*)</aid>", item[1].decode("utf-8"))
                 pAid = pAidS.group(1)
                 tiS = re.search("<ti>(.*)</ti>", item[1].decode("utf-8"))
                 ti = tiS.group(1)
                 strFormat = "Aid: %s\nTitle: %s\n-------------------------------"
                 print(strFormat % (pAid,ti))
+            item = cursor.next()
+            
 
 def fullprint (aids, cursor):
     for aid in aids:
@@ -235,5 +253,14 @@ def fullprint (aids, cursor):
                 price = priceS.group(1)
                 strFormat = "Aid: %s\nDate: %s\nLocation: %s\nCategory: %s\nTitle: %s\nDescription: %s\nPrice: %s\n-------------------------------"
                 print(strFormat % (pAid,date,loc,cat,ti,desc,price))
+            item = cursor.next()
+	
+def is_empty(any_structure):
+    if any_structure:
+       # print('Structure is not empty.')
+        return False
+    else:
+       # print('Structure is empty.')
+        return True
 
 main()
