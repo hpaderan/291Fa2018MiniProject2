@@ -32,9 +32,7 @@ def main():
                     i+=1
                 else:
                     tempQu+=(" " + query[i] + " ")
-                i+=1
-           # elif (query[i] == "%"):
-             #   tempQu+=(" " + query[i] + " ")
+                
             else:
                 tempQu+=(query[i])
             i+=1
@@ -44,10 +42,9 @@ def main():
         '''-----------------------------------------------------'''
 
         args = query.split()
-        print(args)
+        #print(args)
 
-        if 'quit' in args:
-            break
+        isQuit = False
 
         finalRes = []
         tempRes = []
@@ -57,7 +54,11 @@ def main():
 
         i = 0
         while i < len(args):
-            if args[i].lower() == "location":
+            if (args[i].lower() == 'quit'):
+                isQuit = True
+                break
+
+            elif args[i].lower() == "location":
                 compOp = args[i+1]
                 compVal = args[i+2]
 
@@ -114,13 +115,16 @@ def main():
                 isFirst = False
         #-------------- end of while loop ---------------
 
-        print(finalRes)
+        if isQuit:
+            break
+
+        
         if briefoutput:
             briefprint(finalRes,adscursor)
         else:
             fullprint(finalRes,adscursor)
-
         print("============================================")
+        print("Found %d results." % len(finalRes))
         print("============================================")
     #---------------------------------------------------
 
@@ -171,16 +175,13 @@ def TermSearch (term, cursor):
     return retAids
 
 def LikeTermSearch (term, cursor):
-    print(term)
     term = term.lower()
     itemB = cursor.first()
     item = itemB[0].decode("utf-8")
     retAids = []
     while itemB != None:
         if (item.lower()).startswith(term):
-            print("jygjhgfyudvtrdykhu")
             info = str(itemB[1].decode("utf-8"))
-            print(info)
             retAids.append(info)
 
         itemB = cursor.next()
@@ -231,6 +232,7 @@ def briefprint(aids, cursor):
                 ti = tiS.group(1)
                 strFormat = "Aid: %s\nTitle: %s\n-------------------------------"
                 print(strFormat % (pAid,ti))
+                break
             item = cursor.next()
             
 
@@ -255,14 +257,8 @@ def fullprint (aids, cursor):
                 price = priceS.group(1)
                 strFormat = "Aid: %s\nDate: %s\nLocation: %s\nCategory: %s\nTitle: %s\nDescription: %s\nPrice: %s\n-------------------------------"
                 print(strFormat % (pAid,date,loc,cat,ti,desc,price))
+                break
             item = cursor.next()
 	
-def is_empty(any_structure):
-    if any_structure:
-       # print('Structure is not empty.')
-        return False
-    else:
-       # print('Structure is empty.')
-        return True
 
 main()
