@@ -1,0 +1,12 @@
+phase1:
+	python3 phase1.py soursefile.txt
+	Get the input file by using command python3 phase1.py sourse.txt and compute four files that we neeed later
+
+phase2:
+	./phase2.sh
+	Sort the four files and compue them in to BTREE and HASH file by using db_load linus command 
+
+phase3:
+	python3 phase3.py
+	Let user enter the query and find the data that match the query.
+
